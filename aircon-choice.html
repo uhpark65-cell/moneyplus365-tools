@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)file:///C:/Users/PC/Downloads/aircon-choice%20(5).html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>생활환경별 에어컨 선택 가이드 | 머니플러스365</title><style>body{font:16px/1.6 system-ui,sans-serif;color:#172d3b;background:#f5f7f8;margin:0}main{max-width:760px;margin:auto;padding:18px}section,fieldset{background:white;border:1px solid #ccd6dc;border-radius:10px;padding:16px;margin:12px 0;min-width:0}label{display:block;margin:9px 0}input[type=number],select{display:block;width:100%;box-sizing:border-box;padding:10px;font:inherit;border:1px solid #9aaab4;border-radius:5px}button{padding:10px 18px;font:inherit;background:#23566b;color:white;border:0;border-radius:6px}output{display:block;background:#edf4f6;padding:14px;font-weight:bold;white-space:pre-line}small{display:block;color:#465660}h1{font-size:25px}h2{font-size:21px}</style></head><body><main><section id="life-section"><h2>생활환경별 선택 가이드</h2><form id="life"><label>벽걸이형 설치 가능 여부<select id="wf"><option value="u">미확인</option><option value="y">가능</option><option value="n">불가능</option></select></label><label>창문형 설치 가능 여부<select id="cf"><option value="u">미확인</option><option value="y">가능</option><option value="n">불가능</option></select></label><fieldset><legend>해당 생활 조건 모두 선택</legend><div id="needs"><label><input type="checkbox" value="0"> 이사 가능성이 높음</label><label><input type="checkbox" value="1"> 벽면 공사를 피하고 싶음</label><label><input type="checkbox" value="2"> 계절별 설치·철거 희망</label><label><input type="checkbox" value="3"> 장기간 거주 예정</label><label><input type="checkbox" value="4"> 실외기 위치가 가까움</label><label><input type="checkbox" value="5"> 취침 중 소음에 민감함</label><label><input type="checkbox" value="6"> 창문을 자주 열어 환기함</label><label><input type="checkbox" value="7"> 채광과 창문 공간 유지 희망</label></div></fieldset><label>가장 중요한 조건<select id="priority"><option value="">특별한 우선 조건 없음</option></select></label><button type="submit">선택 결과 확인</button> <button type="reset">초기화</button><output id="result" aria-live="polite">조건을 선택한 뒤 결과를 확인하세요.</output></form><small>설치 가능 여부가 우선입니다. 실제 소음, 안전한 철거 및 창문 이용 가능 범위는 모델별로 확인하세요.</small></section></main><script>
+const $=id=>document.getElementById(id), won=x=>x.toLocaleString('ko-KR')+'원';
+const needs=[['c','이사 가능성이 높음','철거·이전 편의성'],['c','벽면 공사를 피하고 싶음','벽면 공사 부담 감소'],['c','계절별 설치·철거 희망','계절별 철거 편의성'],['w','장기간 거주 예정','고정 설치에 적합'],['w','실외기 위치가 가까움','배관 공사 부담 감소'],['w','취침 중 소음에 민감함','압축기가 실외기에 분리됨'],['w','창문을 자주 열어 환기함','창문 이용 편의성'],['w','채광과 창문 공간 유지 희망','창문 공간 확보']];function chosen(){return [...$('needs').querySelectorAll('input:checked')].map(x=>Number(x.value))}function refresh(){let p=$('priority').value;$('priority').replaceChildren(new Option('특별한 우선 조건 없음',''));chosen().forEach(i=>$('priority').add(new Option(needs[i][1],i)));if(chosen().map(String).includes(p))$('priority').value=p;$('result').textContent='조건을 선택한 뒤 결과를 확인하세요.'}$('needs').onchange=refresh;$('life').oninput=()=>{$('result').textContent='조건이 변경되었습니다. 결과를 다시 확인하세요.'};$('life').onsubmit=e=>{
+ e.preventDefault();
+ const w=$('wf').value,c=$('cf').value,s=chosen(),p=$('priority').value;
+ const ws=s.filter(i=>needs[i][0]==='w'),cs=s.filter(i=>needs[i][0]==='c');
+ let r='',reason='',advice='',preferred='';
+ if(w==='n'&&c==='n'){r='두 제품 모두 설치 어려움';advice='설치 환경을 다시 확인하거나 다른 냉방 방법을 검토하세요.';}
+ else if(w==='u'||c==='u'){r='설치 가능 여부 확인 필요';advice='미확인 설치 조건을 확인한 후 다시 비교하세요.';}
+ else if(w==='n'||c==='n'){preferred=w==='n'?'c':'w';reason='다른 제품은 설치가 불가능합니다.';}
+ else if(p!==''){preferred=needs[Number(p)][0];reason='가장 중요한 조건: '+needs[Number(p)][1];}
+ else if(ws.length!==cs.length){preferred=ws.length>cs.length?'w':'c';reason='선택한 생활 조건에 더 많이 부합합니다.';}
+ else {r='두 제품 비교 필요';advice='가장 중요한 조건을 선택하거나 구매·설치비를 비교하세요.';}
+ if(preferred){r=(preferred==='w'?'벽걸이형':'창문형')+' 우선 검토 권장';advice='실제 구매·설치비와 제품별 소음 수준을 함께 비교하세요.';if(w==='y'&&c==='y'&&(preferred==='w'?cs:ws).length)advice='다른 제품에 유리한 조건도 있으므로 중요한 조건과 실제 구매·설치비, 제품별 소음 수준을 함께 확인하세요.';}
+ const out=$('result');out.replaceChildren();
+ function add(tag,value,style){const el=document.createElement(tag);el.textContent=value;el.style.cssText=style||'';out.append(el);}
+ add('strong',r,'display:block;font-size:1.15em');
+ if(reason)add('div',reason,'font-weight:normal;margin-top:4px');
+ for(const [name,items] of [['벽걸이형',ws],['창문형',cs]]){if(!items.length)continue;add('div',name+'이 유리한 조건','margin-top:12px;border-top:1px solid #ccd6dc;padding-top:8px');for(const i of items)add('div','• '+needs[i][2],'font-weight:normal');}
+ add('div',advice,'margin-top:12px;border-top:1px solid #ccd6dc;padding-top:8px;font-weight:normal');
+};$('life').onreset=()=>setTimeout(refresh,0);refresh();
+</script></body></html>
